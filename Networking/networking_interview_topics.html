@@ -1,0 +1,172 @@
+
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 16px 0; }
+  .card { background: var(--color-background-secondary); border: 1px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px; cursor: pointer; transition: border-color .2s, background .2s; }
+  .card:hover { border-color: var(--color-border-primary); background: var(--color-background-primary); }
+  .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .card-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-size: 11px; font-weight: 400; padding: 3px 8px; border-radius: 20px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--color-border-tertiary); }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+  h2 { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 4px; }
+  p { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 14px; }
+</style>
+
+<h2 style="padding-top:12px">Networking interview topics</h2>
+<p>Click any topic to dive deeper.</p>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot" style="background:#534AB7"></div>Fundamentals</div>
+  <div class="legend-item"><div class="dot" style="background:#0F6E56"></div>Protocols</div>
+  <div class="legend-item"><div class="dot" style="background:#993C1D"></div>Security</div>
+  <div class="legend-item"><div class="dot" style="background:#185FA5"></div>Infrastructure</div>
+</div>
+
+<div class="grid">
+
+  <div class="card" onclick="sendPrompt('Explain OSI Model layers with interview tips')">
+    <div class="card-header">
+      <div class="dot" style="background:#534AB7"></div>
+      <div class="card-title">OSI Model</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#EEEDFE;color:#3C3489">7 layers</span>
+      <span class="tag" style="background:#EEEDFE;color:#3C3489">encapsulation</span>
+      <span class="tag" style="background:#EEEDFE;color:#3C3489">PDUs</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain TCP vs UDP differences with interview examples')">
+    <div class="card-header">
+      <div class="dot" style="background:#0F6E56"></div>
+      <div class="card-title">TCP vs UDP</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#E1F5EE;color:#085041">3-way handshake</span>
+      <span class="tag" style="background:#E1F5EE;color:#085041">reliability</span>
+      <span class="tag" style="background:#E1F5EE;color:#085041">use cases</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain HTTP vs HTTPS and how TLS works for an interview')">
+    <div class="card-header">
+      <div class="dot" style="background:#0F6E56"></div>
+      <div class="card-title">HTTP / HTTPS / TLS</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#E1F5EE;color:#085041">HTTP/1.1 vs 2 vs 3</span>
+      <span class="tag" style="background:#E1F5EE;color:#085041">TLS handshake</span>
+      <span class="tag" style="background:#E1F5EE;color:#085041">certs</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain DNS resolution process with interview tips')">
+    <div class="card-header">
+      <div class="dot" style="background:#0F6E56"></div>
+      <div class="card-title">DNS</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#E1F5EE;color:#085041">resolution flow</span>
+      <span class="tag" style="background:#E1F5EE;color:#085041">record types</span>
+      <span class="tag" style="background:#E1F5EE;color:#085041">caching / TTL</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain IP addressing, subnetting, and CIDR for an interview')">
+    <div class="card-header">
+      <div class="dot" style="background:#534AB7"></div>
+      <div class="card-title">IP Addressing & Subnetting</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#EEEDFE;color:#3C3489">IPv4 vs IPv6</span>
+      <span class="tag" style="background:#EEEDFE;color:#3C3489">CIDR</span>
+      <span class="tag" style="background:#EEEDFE;color:#3C3489">NAT</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain what happens when you type a URL in a browser — full interview walkthrough')">
+    <div class="card-header">
+      <div class="dot" style="background:#534AB7"></div>
+      <div class="card-title">URL → Page (Full Flow)</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#EEEDFE;color:#3C3489">DNS → TCP → TLS</span>
+      <span class="tag" style="background:#EEEDFE;color:#3C3489">HTTP → render</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain firewalls, VPN, and network security concepts for a backend interview')">
+    <div class="card-header">
+      <div class="dot" style="background:#993C1D"></div>
+      <div class="card-title">Firewalls & VPN</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#FAECE7;color:#712B13">stateful/stateless</span>
+      <span class="tag" style="background:#FAECE7;color:#712B13">tunneling</span>
+      <span class="tag" style="background:#FAECE7;color:#712B13">IPSec</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain load balancing algorithms and types for a backend/system design interview')">
+    <div class="card-header">
+      <div class="dot" style="background:#185FA5"></div>
+      <div class="card-title">Load Balancing</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#E6F1FB;color:#0C447C">L4 vs L7</span>
+      <span class="tag" style="background:#E6F1FB;color:#0C447C">round-robin</span>
+      <span class="tag" style="background:#E6F1FB;color:#0C447C">sticky sessions</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain CDN, caching layers, and how they reduce latency for an interview')">
+    <div class="card-header">
+      <div class="dot" style="background:#185FA5"></div>
+      <div class="card-title">CDN & Caching</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#E6F1FB;color:#0C447C">edge servers</span>
+      <span class="tag" style="background:#E6F1FB;color:#0C447C">cache-control</span>
+      <span class="tag" style="background:#E6F1FB;color:#0C447C">invalidation</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain WebSockets, long polling, and real-time protocols for an interview')">
+    <div class="card-header">
+      <div class="dot" style="background:#0F6E56"></div>
+      <div class="card-title">WebSockets & Real-time</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#E1F5EE;color:#085041">polling vs push</span>
+      <span class="tag" style="background:#E1F5EE;color:#085041">SSE</span>
+      <span class="tag" style="background:#E1F5EE;color:#085041">WS upgrade</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain common network security attacks like DDoS, MITM, SQL injection, XSS for an interview')">
+    <div class="card-header">
+      <div class="dot" style="background:#993C1D"></div>
+      <div class="card-title">Common Attacks</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#FAECE7;color:#712B13">DDoS</span>
+      <span class="tag" style="background:#FAECE7;color:#712B13">MITM</span>
+      <span class="tag" style="background:#FAECE7;color:#712B13">XSS / CSRF</span>
+    </div>
+  </div>
+
+  <div class="card" onclick="sendPrompt('Explain proxy vs reverse proxy, and API Gateway role in microservices for an interview')">
+    <div class="card-header">
+      <div class="dot" style="background:#185FA5"></div>
+      <div class="card-title">Proxy & API Gateway</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag" style="background:#E6F1FB;color:#0C447C">forward proxy</span>
+      <span class="tag" style="background:#E6F1FB;color:#0C447C">reverse proxy</span>
+      <span class="tag" style="background:#E6F1FB;color:#0C447C">rate limiting</span>
+    </div>
+  </div>
+
+</div>
