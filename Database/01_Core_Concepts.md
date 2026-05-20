@@ -47,6 +47,24 @@ UPDATE accounts SET balance = balance - 500 WHERE user = 'Alice';
 
 Changes made by an in-progress transaction are not visible to other transactions until committed (degree of isolation depends on the **isolation level**).
 
+```sql
+-- T1: Transfer $200 from Alice to Bob
+BEGIN;
+  SELECT balance FROM accounts WHERE name = 'Alice';  -- 1000
+  UPDATE accounts SET balance = 800 WHERE name = 'Alice';
+  UPDATE accounts SET balance = 1200 WHERE name = 'Bob';
+COMMIT;
+
+-- T2 (running concurrently): Calculate total money in the system
+BEGIN;
+  SELECT SUM(balance) FROM accounts;
+COMMIT;
+```
+
+**What isolation prevents:**
+- If T2 runs its `SELECT SUM` *after* T1 debits Alice but *before* it credits Bob, it sees `800 + 1000 = 1800` instead of `2000` — money appears to have vanished. This is a **dirty read / non-repeatable read**.
+- With proper isolation (e.g., `REPEATABLE READ` or `SERIALIZABLE`), T2 either sees the state *before* T1 started (`1000 + 1000 = 2000`) or *after* T1 committed (`800 + 1200 = 2000`) — never an in-between inconsistent snapshot.
+
 ### D — Durability
 > "Once committed, data survives failures."
 
