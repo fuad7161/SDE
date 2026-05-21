@@ -216,6 +216,46 @@ Now each city name lives in exactly one place — changing a city touches one ro
 #### BCNF — Boyce-Codd Normal Form
 Stricter than 3NF: for every functional dependency `X → Y`, X must be a **superkey**.
 
+```
+Context: Each teacher teaches only one subject. A student can have one teacher per subject.
+Candidate keys: (StudentID, TeacherID) and (StudentID, Subject) — both uniquely identify a row.
+
+❌ In 3NF but NOT in BCNF:
+| StudentID | TeacherID | Subject   |
+|-----------|-----------|-----------|
+| 1         | T1        | Math      |
+| 1         | T2        | Physics   |
+| 2         | T1        | Math      |
+| 2         | T3        | Physics   |
+| 3         | T2        | Physics   |
+
+Functional dependency: TeacherID → Subject
+(T1 always teaches Math, T2 always teaches Physics, T3 always teaches Physics)
+
+Problem: TeacherID → Subject exists, but TeacherID alone is NOT a superkey.
+→ "T1 teaches Math" is stored 2× — if T1 switches to Chemistry, multiple rows must change.
+
+✅ After BCNF: Split so every determinant is a superkey
+
+TeacherSubject (TeacherID → Subject):
+| TeacherID | Subject  |
+|-----------|----------|
+| T1        | Math     |
+| T2        | Physics  |
+| T3        | Physics  |
+
+StudentTeacher (StudentID + TeacherID → the enrollment fact):
+| StudentID | TeacherID |
+|-----------|-----------|
+| 1         | T1        |
+| 1         | T2        |
+| 2         | T1        |
+| 2         | T3        |
+| 3         | T2        |
+
+Now every functional dependency has a superkey on the left-hand side.
+```
+
 ### When to Denormalize
 - Read-heavy workloads where JOIN cost is too high.
 - Reporting/analytics (flat denormalized tables are faster to scan).
