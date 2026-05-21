@@ -180,13 +180,37 @@ Now "Mathematics" lives in exactly one place — renaming it touches one row.
 **Rule:** In 2NF + **no transitive dependencies** (non-key columns don't depend on other non-key columns).
 
 ```
-❌ Before 3NF:
-| StudentID | ZipCode | City   |
-→ City depends on ZipCode, not on StudentID (transitive)
+❌ Before 3NF (PK = StudentID):
+| StudentID | Name    | ZipCode | City          |
+|-----------|---------|---------|---------------|
+| 1         | Alice   | 10001   | New York      |
+| 2         | Bob     | 90001   | Los Angeles   |
+| 3         | Charlie | 10001   | New York      |
+| 4         | Diana   | 90001   | Los Angeles   |
 
-✅ After 3NF:
-Students(StudentID, ZipCode)
-ZipCodes(ZipCode, City)
+Problem: "New York" and "Los Angeles" are stored multiple times.
+City depends on ZipCode, and ZipCode depends on StudentID.
+StudentID → ZipCode → City  (transitive dependency)
+→ If zip code 10001 moves to a new city, you must update multiple rows (update anomaly).
+→ If you delete Alice and Charlie, you lose the fact that 10001 = New York (deletion anomaly).
+
+✅ After 3NF: Split into two tables
+
+Students (StudentID → Name, ZipCode):
+| StudentID | Name    | ZipCode |
+|-----------|---------|---------|
+| 1         | Alice   | 10001   |
+| 2         | Bob     | 90001   |
+| 3         | Charlie | 10001   |
+| 4         | Diana   | 90001   |
+
+ZipCodes (ZipCode → City):
+| ZipCode | City          |
+|---------|---------------|
+| 10001   | New York      |
+| 90001   | Los Angeles   |
+
+Now each city name lives in exactly one place — changing a city touches one row.
 ```
 
 #### BCNF — Boyce-Codd Normal Form
