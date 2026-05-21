@@ -1,3 +1,5 @@
+[50 system design pattern](https://designgurus.substack.com/p/50-system-design-patterns-every-engineer)
+
 Conceptual questions you'll definitely face:
 
 SOLID principles — relationship to design patterns
