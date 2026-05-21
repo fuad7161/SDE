@@ -146,12 +146,34 @@ Normalization organizes a database to **reduce redundancy** and **improve data i
 
 ```
 ❌ Before 2NF (PK = StudentID + CourseID):
-| StudentID | CourseID | CourseName | Grade |
-→ CourseName depends only on CourseID (partial dependency)
+| StudentID | CourseID | CourseName  | Grade |
+|-----------|----------|-------------|-------|
+| 1         | C01      | Mathematics | A     |
+| 1         | C02      | Physics     | B     |
+| 2         | C01      | Mathematics | C     |
+| 3         | C02      | Physics     | A     |
+
+Problem: "Mathematics" is stored 2× and "Physics" 2×.
+CourseName depends only on CourseID, not on the full PK (StudentID + CourseID).
+→ If you rename "Mathematics" you must update multiple rows (update anomaly).
 
 ✅ After 2NF: Split into two tables
-Enrollments(StudentID, CourseID, Grade)
-Courses(CourseID, CourseName)
+
+Enrollments (StudentID + CourseID → Grade):
+| StudentID | CourseID | Grade |
+|-----------|----------|-------|
+| 1         | C01      | A     |
+| 1         | C02      | B     |
+| 2         | C01      | C     |
+| 3         | C02      | A     |
+
+Courses (CourseID → CourseName):
+| CourseID | CourseName  |
+|----------|-------------|
+| C01      | Mathematics |
+| C02      | Physics     |
+
+Now "Mathematics" lives in exactly one place — renaming it touches one row.
 ```
 
 #### 3NF — Third Normal Form
