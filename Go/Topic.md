@@ -20,6 +20,7 @@
 | 10 | [Generics](./10_Generics.md) | type parameters, constraints, comparable |
 | 11 | [Testing](./11_Testing.md) | table-driven tests, benchmarks, mocking, t.Parallel |
 | 12 | [Package & Module System](./12_Packages_Modules.md) | go.mod, go.sum, build tags, init() order |
+| 13 | [Input Stream Buffering](./13_Input_Stream_Buffering.md) | bufio, Scanner, Reader, performance, io.Reader |
 
 ---
 
