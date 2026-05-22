@@ -47,6 +47,24 @@ UPDATE accounts SET balance = balance - 500 WHERE user = 'Alice';
 
 Changes made by an in-progress transaction are not visible to other transactions until committed (degree of isolation depends on the **isolation level**).
 
+```sql
+-- T1: Transfer $200 from Alice to Bob
+BEGIN;
+  SELECT balance FROM accounts WHERE name = 'Alice';  -- 1000
+  UPDATE accounts SET balance = 800 WHERE name = 'Alice';
+  UPDATE accounts SET balance = 1200 WHERE name = 'Bob';
+COMMIT;
+
+-- T2 (running concurrently): Calculate total money in the system
+BEGIN;
+  SELECT SUM(balance) FROM accounts;
+COMMIT;
+```
+
+**What isolation prevents:**
+- If T2 runs its `SELECT SUM` *after* T1 debits Alice but *before* it credits Bob, it sees `800 + 1000 = 1800` instead of `2000` — money appears to have vanished. This is a **dirty read / non-repeatable read**.
+- With proper isolation (e.g., `REPEATABLE READ` or `SERIALIZABLE`), T2 either sees the state *before* T1 started (`1000 + 1000 = 2000`) or *after* T1 committed (`800 + 1200 = 2000`) — never an in-between inconsistent snapshot.
+
 ### D — Durability
 > "Once committed, data survives failures."
 
@@ -128,29 +146,115 @@ Normalization organizes a database to **reduce redundancy** and **improve data i
 
 ```
 ❌ Before 2NF (PK = StudentID + CourseID):
-| StudentID | CourseID | CourseName | Grade |
-→ CourseName depends only on CourseID (partial dependency)
+| StudentID | CourseID | CourseName  | Grade |
+|-----------|----------|-------------|-------|
+| 1         | C01      | Mathematics | A     |
+| 1         | C02      | Physics     | B     |
+| 2         | C01      | Mathematics | C     |
+| 3         | C02      | Physics     | A     |
+
+Problem: "Mathematics" is stored 2× and "Physics" 2×.
+CourseName depends only on CourseID, not on the full PK (StudentID + CourseID).
+→ If you rename "Mathematics" you must update multiple rows (update anomaly).
 
 ✅ After 2NF: Split into two tables
-Enrollments(StudentID, CourseID, Grade)
-Courses(CourseID, CourseName)
+
+Enrollments (StudentID + CourseID → Grade):
+| StudentID | CourseID | Grade |
+|-----------|----------|-------|
+| 1         | C01      | A     |
+| 1         | C02      | B     |
+| 2         | C01      | C     |
+| 3         | C02      | A     |
+
+Courses (CourseID → CourseName):
+| CourseID | CourseName  |
+|----------|-------------|
+| C01      | Mathematics |
+| C02      | Physics     |
+
+Now "Mathematics" lives in exactly one place — renaming it touches one row.
 ```
 
 #### 3NF — Third Normal Form
 **Rule:** In 2NF + **no transitive dependencies** (non-key columns don't depend on other non-key columns).
 
 ```
-❌ Before 3NF:
-| StudentID | ZipCode | City   |
-→ City depends on ZipCode, not on StudentID (transitive)
+❌ Before 3NF (PK = StudentID):
+| StudentID | Name    | ZipCode | City          |
+|-----------|---------|---------|---------------|
+| 1         | Alice   | 10001   | New York      |
+| 2         | Bob     | 90001   | Los Angeles   |
+| 3         | Charlie | 10001   | New York      |
+| 4         | Diana   | 90001   | Los Angeles   |
 
-✅ After 3NF:
-Students(StudentID, ZipCode)
-ZipCodes(ZipCode, City)
+Problem: "New York" and "Los Angeles" are stored multiple times.
+City depends on ZipCode, and ZipCode depends on StudentID.
+StudentID → ZipCode → City  (transitive dependency)
+→ If zip code 10001 moves to a new city, you must update multiple rows (update anomaly).
+→ If you delete Alice and Charlie, you lose the fact that 10001 = New York (deletion anomaly).
+
+✅ After 3NF: Split into two tables
+
+Students (StudentID → Name, ZipCode):
+| StudentID | Name    | ZipCode |
+|-----------|---------|---------|
+| 1         | Alice   | 10001   |
+| 2         | Bob     | 90001   |
+| 3         | Charlie | 10001   |
+| 4         | Diana   | 90001   |
+
+ZipCodes (ZipCode → City):
+| ZipCode | City          |
+|---------|---------------|
+| 10001   | New York      |
+| 90001   | Los Angeles   |
+
+Now each city name lives in exactly one place — changing a city touches one row.
 ```
 
 #### BCNF — Boyce-Codd Normal Form
 Stricter than 3NF: for every functional dependency `X → Y`, X must be a **superkey**.
+
+```
+Context: Each teacher teaches only one subject. A student can have one teacher per subject.
+Candidate keys: (StudentID, TeacherID) and (StudentID, Subject) — both uniquely identify a row.
+
+❌ In 3NF but NOT in BCNF:
+| StudentID | TeacherID | Subject   |
+|-----------|-----------|-----------|
+| 1         | T1        | Math      |
+| 1         | T2        | Physics   |
+| 2         | T1        | Math      |
+| 2         | T3        | Physics   |
+| 3         | T2        | Physics   |
+
+Functional dependency: TeacherID → Subject
+(T1 always teaches Math, T2 always teaches Physics, T3 always teaches Physics)
+
+Problem: TeacherID → Subject exists, but TeacherID alone is NOT a superkey.
+→ "T1 teaches Math" is stored 2× — if T1 switches to Chemistry, multiple rows must change.
+
+✅ After BCNF: Split so every determinant is a superkey
+
+TeacherSubject (TeacherID → Subject):
+| TeacherID | Subject  |
+|-----------|----------|
+| T1        | Math     |
+| T2        | Physics  |
+| T3        | Physics  |
+
+StudentTeacher (StudentID + TeacherID → the enrollment fact):
+| StudentID | TeacherID |
+|-----------|-----------|
+| 1         | T1        |
+| 1         | T2        |
+| 2         | T1        |
+| 2         | T3        |
+| 3         | T2        |
+
+Now every functional dependency has a superkey on the left-hand side.
+```
 
 ### When to Denormalize
 - Read-heavy workloads where JOIN cost is too high.
