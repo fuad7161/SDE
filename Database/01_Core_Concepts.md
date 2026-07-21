@@ -1,6 +1,6 @@
 # 🟣 Core Concepts
 
-> **Category:** Fundamentals &nbsp;|&nbsp; **Tags:** `ACID` `CAP theorem` `normalization` `keys`
+> **Category:** Fundamentals &nbsp;|&nbsp; **Tags:** `ACID` `CAP theorem` `normalization` `keys` `data types` `constraints` `OLTP vs OLAP` `architecture`
 
 ---
 
@@ -9,7 +9,11 @@
 2. [CAP Theorem](#cap-theorem)
 3. [Normalization](#normalization)
 4. [Database Keys](#database-keys)
-5. [Interview Questions](#interview-questions)
+5. [Data Types](#data-types)
+6. [Constraints](#constraints)
+7. [OLTP vs OLAP](#oltp-vs-olap)
+8. [Database Architecture](#database-architecture)
+9. [Interview Questions](#interview-questions)
 
 ---
 
@@ -288,6 +292,349 @@ Now every functional dependency has a superkey on the left-hand side.
 
 ---
 
+## Data Types
+
+Choosing the right data type affects **storage cost**, **query performance**, and **data correctness**.
+
+### Numeric Types
+
+| Type | Storage | Range / Use |
+|------|---------|-------------|
+| `SMALLINT` | 2 bytes | -32,768 to 32,767 |
+| `INTEGER` | 4 bytes | ~±2 billion |
+| `BIGINT` | 8 bytes | ±9.2 × 10¹⁸ |
+| `SERIAL` / `BIGSERIAL` | auto-increment | Surrogate PK (PostgreSQL) |
+| `NUMERIC(p,s)` | variable | Exact precision — money, scientific |
+| `REAL` / `DOUBLE PRECISION` | 4 / 8 bytes | Floating point — fast, approximate |
+
+```sql
+-- NUMERIC for exact money
+price NUMERIC(10,2)  -- up to 99999999.99
+
+-- SERIAL for auto-increment PK
+id SERIAL PRIMARY KEY
+```
+
+### String Types
+
+| Type | Use |
+|------|-----|
+| `CHAR(n)` | Fixed-length (padded) — rarely used |
+| `VARCHAR(n)` | Variable-length with max limit |
+| `TEXT` | Variable-length, no limit (PostgreSQL) |
+| `UUID` | 128-bit unique identifier |
+
+```sql
+-- VARCHAR vs TEXT
+name VARCHAR(100)  -- enforces max length
+bio  TEXT          -- no limit — use when length is unpredictable
+
+-- UUID
+id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+```
+
+### Date & Time Types
+
+| Type | Storage | Use |
+|------|---------|-----|
+| `DATE` | 4 bytes | Calendar date (no time) |
+| `TIME` | 8 bytes | Time of day |
+| `TIMESTAMP` | 8 bytes | Date + time (no timezone) |
+| `TIMESTAMPTZ` | 8 bytes | Date + time + timezone (recommended) |
+| `INTERVAL` | 16 bytes | Duration (e.g., '2 hours 30 minutes') |
+
+```sql
+-- Always prefer TIMESTAMPTZ
+created_at TIMESTAMPTZ DEFAULT NOW()
+```
+
+### Boolean
+
+```sql
+is_active BOOLEAN DEFAULT TRUE
+```
+
+### JSON / JSONB (PostgreSQL)
+
+| Type | Storage | Features |
+|------|---------|----------|
+| `JSON` | Raw text | Stores exact input; re-parse on every access |
+| `JSONB` | Binary | Indexed, fast queries, decomposed — **prefer this** |
+
+```sql
+-- JSONB with indexing
+CREATE TABLE events (
+    id SERIAL PRIMARY KEY,
+    data JSONB
+);
+
+-- GIN index for key/containment queries
+CREATE INDEX idx_events_data ON events USING GIN(data);
+
+SELECT * FROM events WHERE data @> '{"type": "click"}';
+```
+
+### Binary / Large Objects
+
+| Type | Use |
+|------|-----|
+| `BYTEA` | Variable-length binary (PostgreSQL) |
+| `BLOB` | Binary large object (MySQL, others) |
+
+**Rule of thumb:** Store files in object storage (S3), store the URL/path in the database.
+
+### Choosing the Right Type
+
+| Principle | Example |
+|-----------|---------|
+| Smallest that fits | `SMALLINT` over `BIGINT` for age |
+| Exact for money | `NUMERIC` not `FLOAT` |
+| `TIMESTAMPTZ` over `TIMESTAMP` | Always |
+| `TEXT` over `VARCHAR` | When max length is unpredictable (PostgreSQL treats them identically for performance) |
+| `JSONB` over `JSON` | When you need to query inside JSON |
+
+---
+
+## Constraints
+
+Constraints enforce **data integrity** at the database level — they prevent invalid data regardless of application logic.
+
+### Types of Constraints
+
+| Constraint | Purpose | Example |
+|------------|---------|---------|
+| `PRIMARY KEY` | Uniquely identifies each row; NOT NULL + UNIQUE | `id INT PRIMARY KEY` |
+| `FOREIGN KEY` | Referential integrity between tables | `REFERENCES users(id)` |
+| `UNIQUE` | No duplicate values (allows one NULL) | `UNIQUE (email)` |
+| `NOT NULL` | Column cannot be NULL | `name TEXT NOT NULL` |
+| `CHECK` | Custom validation rule | `CHECK (age >= 0 AND age <= 150)` |
+| `DEFAULT` | Auto-fill when no value provided | `status TEXT DEFAULT 'active'` |
+| `EXCLUSION` | No two rows overlap for specified operators (PostgreSQL) | No double-booking a room |
+
+### CHECK Constraints
+
+```sql
+-- Validate range
+ALTER TABLE products ADD CONSTRAINT positive_price
+    CHECK (price > 0);
+
+-- Validate across columns
+ALTER TABLE events ADD CONSTRAINT valid_date_range
+    CHECK (start_time < end_time);
+
+-- Complex rules
+ALTER TABLE employees ADD CONSTRAINT valid_email
+    CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
+```
+
+### EXCLUSION Constraints (PostgreSQL)
+
+```sql
+-- Prevent room double-booking: no overlapping reservations
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+CREATE TABLE reservations (
+    room_id INT,
+    during TSRANGE,
+    EXCLUDE USING GIST (room_id WITH =, during WITH &&)
+);
+-- Attempting to insert overlapping reservation fails automatically
+```
+
+### NOT NULL vs DEFAULT
+
+```sql
+-- NOT NULL + DEFAULT: column always has a value
+status TEXT NOT NULL DEFAULT 'pending';
+
+-- Without DEFAULT: INSERT without status fails
+-- With DEFAULT: INSERT without status → 'pending'
+```
+
+### When to Use Constraints
+
+| Rule | Reasoning |
+|------|-----------|
+| Always use `NOT NULL` unless NULL is meaningful | Prevents accidental missing data |
+| Always use `FOREIGN KEY` for relationships | DB enforces referential integrity |
+| Use `CHECK` for business rules | Faster than app-level validation; DB-level safety net |
+| Use `DEFAULT` for common values | Reduces INSERT boilerplate |
+| Use `EXCLUSION` for scheduling/resource conflicts | Prevents overlapping ranges at DB level |
+
+---
+
+## OLTP vs OLAP
+
+Two fundamentally different database workload types that drive schema design, indexing, and scaling decisions.
+
+### OLTP — Online Transaction Processing
+
+Day-to-day operations: **many small, fast reads and writes**.
+
+| Characteristic | Detail |
+|----------------|--------|
+| Queries | Point lookups, short transactions |
+| Row count per query | 1 – 100 rows |
+| Operations | INSERT, UPDATE, DELETE, SELECT by PK |
+| Latency requirement | Milliseconds |
+| Data model | Normalized (3NF+) |
+| Example | Banking, e-commerce, user authentication |
+
+```
+OLTP Pattern:
+  SELECT * FROM orders WHERE id = 12345;           -- point lookup
+  UPDATE accounts SET balance = balance - 100 WHERE id = 42;
+  INSERT INTO orders (user_id, total) VALUES (7, 99.99);
+```
+
+### OLAP — Online Analytical Processing
+
+Business intelligence: **fewer, heavier read queries** scanning large datasets.
+
+| Characteristic | Detail |
+|----------------|--------|
+| Queries | Aggregations, GROUP BY, JOINs across millions of rows |
+| Row count per query | 10,000 – billions |
+| Operations | SELECT with aggregations, rarely UPDATE |
+| Latency requirement | Seconds to minutes |
+| Data model | Denormalized (star/snowflake schema) |
+| Example | Reports, dashboards, analytics |
+
+```
+OLAP Pattern:
+  SELECT region, SUM(revenue), COUNT(*)
+  FROM orders
+  WHERE created_at >= '2024-01-01'
+  GROUP BY region;
+```
+
+### Comparison
+
+| Aspect | OLTP | OLAP |
+|--------|------|------|
+| Purpose | Run the business | Analyze the business |
+| Data volume | GBs | TBs – PBs |
+| Schema | Normalized (3NF) | Denormalized (star/snowflake) |
+| Indexes | B-Tree on PKs/FKs | Columnar, bitmap |
+| Scaling | Vertical | Horizontal (columnar stores) |
+| DB examples | PostgreSQL, MySQL | ClickHouse, Snowflake, BigQuery, Redshift |
+
+### Hybrid (HTAP)
+
+Some systems support both workloads: PostgreSQL with Citus, TiDB, CockroachDB.
+
+---
+
+## Database Architecture
+
+Understanding how a database works internally explains why certain design decisions matter.
+
+### Storage Model
+
+**Page/Block-based storage:**
+- Data is stored in fixed-size **pages** (typically 8 KB).
+- Pages are grouped into **extents** (contiguous blocks of pages).
+- A **heap** (or tablespace) holds all pages for a table.
+
+```
+Table "orders"
+  Page 0: [Row 1, Row 2, Row 3, ...]
+  Page 1: [Row 100, Row 101, ...]
+  Page 2: [Row 200, Row 201, ...]
+  ...
+```
+
+**Row-based** (OLTP): Each page contains full rows — good for point lookups.
+
+**Column-based** (OLAP): Each page contains one column's values — good for aggregations.
+
+### Query Processing Pipeline
+
+```
+SQL Query
+    ↓
+┌─────────────┐
+│  Parser     │  Syntax check, build parse tree
+└──────┬──────┘
+       ↓
+┌─────────────┐
+│  Analyzer   │  Resolve table/column names, type checking
+└──────┬──────┘
+       ↓
+┌──────────────┐
+│  Optimizer   │  Generate execution plans, pick cheapest (cost-based)
+└──────┬───────┘
+       ↓
+┌──────────────┐
+│  Executor    │  Run the plan — seq scan, index scan, joins, etc.
+└──────┬───────┘
+       ↓
+   Result Set
+```
+
+**Cost-based optimizer** estimates cost of each plan using table statistics (row count, data distribution, index availability) and picks the lowest-cost plan.
+
+### Buffer Pool
+
+An **in-memory cache** of disk pages that sits between the database and storage.
+
+```
+Application Request
+       ↓
+┌──────────────┐
+│ Buffer Pool  │  (in RAM)
+│ Page cache   │  ← check if page is here
+└──────┬───────┘
+       │
+  ┌────┴────┐
+  │ Hit     │ Miss → read from disk → cache in buffer pool
+  └─────────┘
+```
+
+- **Buffer hit:** Page is in memory — fast (microseconds).
+- **Buffer miss:** Page must be read from disk — slow (milliseconds).
+- **Eviction:** When full, LRU (or clock algorithm) evicts least-used pages.
+
+**Why this matters:** A well-tuned buffer pool size (e.g., `shared_buffers` in PostgreSQL) is one of the most impactful performance settings.
+
+### Write-Ahead Logging (WAL)
+
+Every change is written to a **log file** before being applied to the actual data pages.
+
+```
+1. Write change to WAL (sequential append — fast)
+2. Return success to client
+3. Eventually: checkpoint — flush dirty pages to disk
+```
+
+**Why WAL exists:**
+- **Crash recovery:** If the DB crashes, WAL replays committed changes.
+- **Durability:** Once WAL is flushed, the commit is durable even if the data page hasn't been written yet.
+- **Replication:** WAL shipping is how most replication works (stream WAL to replicas).
+
+```
+WAL Timeline:
+  [WAL segment 1] [WAL segment 2] [WAL segment 3] → checkpoint → [clean data pages on disk]
+```
+
+### Checkpointing
+
+Periodically, the database flushes all **dirty pages** (modified pages in buffer pool) to disk and records a checkpoint in the WAL. After checkpoint, older WAL segments can be recycled.
+
+```
+WAL:  [seg1][seg2][seg3][seg4]  →  checkpoint  →  [seg5][seg6]...
+                                       ↑
+                          dirty pages flushed to data files
+```
+
+### Transaction ID (PostgreSQL)
+
+Every transaction gets a monotonically increasing **txid**. This is used for:
+- **MVCC visibility:** Determine which row version a transaction can see.
+- **Vacuum:** Clean up dead tuples older than the oldest active transaction.
+
+---
+
 ## Interview Questions
 
 ### Q1. What are ACID properties? Explain with an example.
@@ -352,6 +699,51 @@ Now every functional dependency has a superkey on the left-hand side.
 > - **CAP Consistency:** In a distributed system, every read reflects the most recent write across all nodes. It's about **cross-node agreement** (linearizability).
 >
 > These are completely different concepts despite sharing the same word.
+
+---
+
+### Q7. When would you use NUMERIC vs FLOAT for storing numbers?
+
+> **Answer:**
+> - **NUMERIC (DECIMAL):** Exact precision — stores the exact value. Use for **money**, scientific data, and anything where rounding errors are unacceptable. Slower for arithmetic.
+> - **FLOAT / DOUBLE PRECISION:** Approximate — fast binary floating point. Fine for physics simulations, ML weights, or any domain where small precision loss is acceptable.
+>
+> Rule: Never use FLOAT for financial calculations. Use `NUMERIC(10,2)` for currency.
+
+---
+
+### Q8. What is the difference between OLTP and OLAP? How do they affect schema design?
+
+> **Answer:**
+> - **OLTP (Online Transaction Processing):** Fast, small transactions (point lookups, single-row inserts/updates). Normalized schemas (3NF) to reduce redundancy. Examples: banking, e-commerce.
+> - **OLAP (Online Analytical Processing):** Heavy read queries scanning millions of rows (aggregations, GROUP BY). Denormalized schemas (star/snowflake) to reduce JOINs. Examples: dashboards, business intelligence.
+>
+> OLTP optimizes for write speed and row-level consistency. OLAP optimizes for read speed and column-level scan efficiency.
+
+---
+
+### Q9. What happens inside a database when you run a SQL query?
+
+> **Answer:**
+> 1. **Parser:** Validates syntax, builds a parse tree.
+> 2. **Analyzer:** Resolves table/column names, checks types.
+> 3. **Optimizer:** Generates multiple execution plans, estimates cost using table statistics (row count, distribution, indexes), picks the cheapest plan.
+> 4. **Executor:** Runs the plan — sequential scans, index scans, nested loop/hash/merge joins.
+> 5. **Result set** returned to client.
+>
+> You can see the optimizer's choice using `EXPLAIN` or `EXPLAIN ANALYZE`.
+
+---
+
+### Q10. What is a buffer pool and why does it matter?
+
+> **Answer:**
+> The buffer pool is an **in-memory cache of data pages** that sits between the database engine and disk. When a page is read, it's cached in the buffer pool so subsequent reads of the same page are served from memory (microseconds) instead of disk (milliseconds).
+>
+> **Why it matters:**
+> - A properly sized buffer pool (e.g., PostgreSQL `shared_buffers`) is one of the most impactful performance settings.
+> - If the pool is too small, pages are evicted and re-read from disk frequently (cache thrashing).
+> - If too large, it may starve the OS of memory.
 
 ---
 

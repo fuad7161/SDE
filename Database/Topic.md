@@ -19,8 +19,8 @@
   <tr>
     <td width="50%" valign="top">
       🟣 &nbsp;<b>Core Concepts</b><br>
-      <sub>ACID, CAP theorem, Normalization, Keys</sub><br><br>
-      <kbd>ACID</kbd> <kbd>CAP theorem</kbd> <kbd>normalization</kbd> <kbd>keys</kbd><br><br>
+      <sub>ACID, CAP theorem, Normalization, Keys, Data Types, Constraints, OLTP/OLAP, Architecture</sub><br><br>
+      <kbd>ACID</kbd> <kbd>CAP theorem</kbd> <kbd>normalization</kbd> <kbd>keys</kbd> <kbd>data types</kbd> <kbd>constraints</kbd><br><br>
       <a href="01_Core_Concepts.md">Open →</a>
     </td>
     <td width="50%" valign="top">
@@ -47,14 +47,14 @@
   <tr>
     <td valign="top">
       🟣 &nbsp;<b>Database Design</b><br>
-      <sub>ER diagrams, relationships, schema trade-offs</sub><br><br>
-      <kbd>ER diagrams</kbd> <kbd>many-to-many</kbd> <kbd>soft delete</kbd><br><br>
+      <sub>Data modeling, ER diagrams, relationships, schema trade-offs</sub><br><br>
+      <kbd>ER diagrams</kbd> <kbd>many-to-many</kbd> <kbd>soft delete</kbd> <kbd>data modeling</kbd><br><br>
       <a href="05_Database_Design.md">Open →</a>
     </td>
     <td valign="top">
       🔵 &nbsp;<b>Performance & Scaling</b><br>
-      <sub>Sharding, replication, connection pooling</sub><br><br>
-      <kbd>sharding</kbd> <kbd>replication</kbd> <kbd>connection pool</kbd><br><br>
+      <sub>Sharding, replication, partitioning, connection pooling</sub><br><br>
+      <kbd>sharding</kbd> <kbd>replication</kbd> <kbd>partitioning</kbd> <kbd>connection pool</kbd><br><br>
       <a href="06_Performance_Scaling.md">Open →</a>
     </td>
   </tr>

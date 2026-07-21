@@ -1,6 +1,6 @@
 # 🔵 Performance & Scaling
 
-> **Category:** Performance &nbsp;|&nbsp; **Tags:** `sharding` `replication` `connection pool`
+> **Category:** Performance &nbsp;|&nbsp; **Tags:** `sharding` `replication` `connection pool` `partitioning`
 
 ---
 
@@ -8,9 +8,10 @@
 1. [Vertical vs Horizontal Scaling](#vertical-vs-horizontal-scaling)
 2. [Database Sharding](#database-sharding)
 3. [Replication](#replication)
-4. [Connection Pooling](#connection-pooling)
-5. [Caching Strategies](#caching-strategies)
-6. [Interview Questions](#interview-questions)
+4. [Table Partitioning](#table-partitioning)
+5. [Connection Pooling](#connection-pooling)
+6. [Caching Strategies](#caching-strategies)
+7. [Interview Questions](#interview-questions)
 
 ---
 
@@ -120,6 +121,132 @@ Reads  ──→ [Replica 1 or 2]
 The delay between a write on the primary and its appearance on the replica.
 - **Problem:** A user writes data, then immediately reads from a replica that hasn't synced yet — gets stale data.
 - **Solution:** Read-your-writes consistency: after a write, direct the same user's reads to the primary for a short window.
+
+---
+
+## Table Partitioning
+
+**Partitioning** splits one logical table into smaller physical pieces. Unlike sharding (which distributes data across multiple servers), partitioning happens **within a single database server**.
+
+### Why Partition
+
+| Problem | How Partitioning Helps |
+|---------|----------------------|
+| Large tables (100M+ rows) | Queries scan only relevant partitions |
+| Old data archival | Drop a partition instantly (no DELETE) |
+| Maintenance windows | Vacuum/backup one partition at a time |
+| Index bloat | Smaller indexes per partition = faster |
+| Query performance | Partition pruning skips irrelevant data |
+
+### Partition Types
+
+#### Range Partitioning
+
+Split by a **continuous range** (dates, IDs).
+
+```sql
+-- PostgreSQL: range partition by created_at
+CREATE TABLE orders (
+    id          BIGSERIAL,
+    user_id     BIGINT,
+    total       NUMERIC(10,2),
+    created_at  TIMESTAMPTZ NOT NULL
+) PARTITION BY RANGE (created_at);
+
+-- Create partitions
+CREATE TABLE orders_2024_q1 PARTITION OF orders
+    FOR VALUES FROM ('2024-01-01') TO ('2024-04-01');
+
+CREATE TABLE orders_2024_q2 PARTITION OF orders
+    FOR VALUES FROM ('2024-04-01') TO ('2024-07-01');
+
+CREATE TABLE orders_2024_q3 PARTITION OF orders
+    FOR VALUES FROM ('2024-07-01') TO ('2024-10-01');
+
+CREATE TABLE orders_2024_q4 PARTITION OF orders
+    FOR VALUES FROM ('2024-10-01') TO ('2025-01-01');
+```
+
+**Pruning:** `SELECT * FROM orders WHERE created_at >= '2024-04-01' AND created_at < '2024-07-01'` hits only `orders_2024_q2`.
+
+#### Hash Partitioning
+
+Distribute rows **evenly** across partitions using a hash function.
+
+```sql
+CREATE TABLE sessions (
+    id          BIGSERIAL,
+    user_id     BIGINT NOT NULL,
+    token       VARCHAR(255)
+) PARTITION BY HASH (user_id);
+
+CREATE TABLE sessions_p0 PARTITION OF sessions
+    FOR VALUES WITH (MODULUS 4, REMAINDER 0);
+CREATE TABLE sessions_p1 PARTITION OF sessions
+    FOR VALUES WITH (MODULUS 4, REMAINDER 1);
+CREATE TABLE sessions_p2 PARTITION OF sessions
+    FOR VALUES WITH (MODULUS 4, REMAINDER 2);
+CREATE TABLE sessions_p3 PARTITION OF sessions
+    FOR VALUES WITH (MODULUS 4, REMAINDER 3);
+```
+
+**Use when:** No natural range key; you want even distribution across partitions.
+
+#### List Partitioning
+
+Split by a **discrete set of values**.
+
+```sql
+CREATE TABLE orders_by_region (
+    id          BIGSERIAL,
+    region      VARCHAR(20) NOT NULL,
+    total       NUMERIC(10,2)
+) PARTITION BY LIST (region);
+
+CREATE TABLE orders_us PARTITION OF orders_by_region FOR VALUES IN ('US', 'CA');
+CREATE TABLE orders_eu PARTITION OF orders_by_region FOR VALUES IN ('DE', 'FR', 'NL');
+CREATE TABLE orders_ap PARTITION OF orders_by_region FOR VALUES IN ('JP', 'AU', 'IN');
+```
+
+**Use when:** Data naturally groups into discrete categories (regions, status, type).
+
+### Partitioning vs Sharding
+
+| Aspect | Partitioning | Sharding |
+|--------|-------------|----------|
+| Location | Single server, multiple disk structures | Multiple servers |
+| Transparent to app | Yes (same SQL) | No (sharding logic needed) |
+| Cross-partition queries | Easy (same DB) | Hard (distributed) |
+| Scaling | Helps with large tables on one server | Scales across servers |
+| Complexity | Low (DB-native) | High (middleware/app logic) |
+
+### Automatic Partition Management
+
+```sql
+-- pg_partman (PostgreSQL extension): auto-create monthly partitions
+CREATE EXTENSION pg_partman;
+
+SELECT partman.create_parent(
+    p_parent_table := 'public.orders',
+    p_control := 'created_at',
+    p_type := 'range',
+    p_interval := '1 month'
+);
+
+-- Auto-create future partitions, drop old ones
+-- Run via pg_cron or cron job
+SELECT partman.run_maintenance();
+```
+
+### When to Partition
+
+| Scenario | Recommendation |
+|----------|---------------|
+| Table > 100M rows or > 50 GB | Strong candidate |
+| Time-series data with retention | Range partition by time (easy archival) |
+| Multi-tenant with tenant isolation | Hash or list partition by tenant_id |
+| Small table (< 1M rows) | Partitioning overhead not worth it |
+| Frequent full-table scans | Partitioning helps if pruning is possible |
 
 ---
 
@@ -273,6 +400,25 @@ Cache sits in front of DB — application always reads from cache; cache handles
 > - **Read-your-own-writes:** After a write, direct that user's reads to the primary for a short window (or until lag is resolved).
 > - **Monotonic reads:** Always route a user's reads to the same replica (using sticky sessions or user-based routing).
 > - **Use synchronous replication** for critical data (at cost of write latency).
+
+---
+
+### Q6. What is table partitioning? When would you use it?
+
+> **Answer:**
+> Partitioning splits one logical table into smaller physical pieces **on the same server**. The database automatically routes queries to the correct partition (partition pruning) and drops/attaches partitions efficiently.
+>
+> **Types:**
+> - **Range:** Split by continuous range (e.g., dates). Good for time-series data with archival.
+> - **Hash:** Distribute evenly across partitions using a hash function. Good for no natural range key.
+> - **List:** Split by discrete values (e.g., regions). Good for categorical data.
+>
+> **When to use:**
+> - Table exceeds 100M rows or 50 GB.
+> - Time-series data with retention policies (drop old partitions instead of DELETE).
+> - You need faster maintenance (vacuum, backup) on subsets of data.
+>
+> **When NOT to use:** Small tables (< 1M rows) — the overhead of managing partitions outweighs the benefit.
 
 ---
 

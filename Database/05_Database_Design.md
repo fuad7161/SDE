@@ -1,16 +1,119 @@
 # 🟣 Database Design
 
-> **Category:** Fundamentals &nbsp;|&nbsp; **Tags:** `ER diagrams` `many-to-many` `soft delete`
+> **Category:** Fundamentals &nbsp;|&nbsp; **Tags:** `ER diagrams` `many-to-many` `soft delete` `data modeling`
 
 ---
 
 ## Table of Contents
-1. [ER Diagrams](#er-diagrams)
-2. [Relationships & Cardinality](#relationships--cardinality)
-3. [Implementing Relationships in SQL](#implementing-relationships-in-sql)
-4. [Schema Design Trade-offs](#schema-design-trade-offs)
-5. [Soft Delete Patterns](#soft-delete-patterns)
-6. [Interview Questions](#interview-questions)
+1. [Data Modeling](#data-modeling)
+2. [ER Diagrams](#er-diagrams)
+3. [Relationships & Cardinality](#relationships--cardinality)
+4. [Implementing Relationships in SQL](#implementing-relationships-in-sql)
+5. [Schema Design Trade-offs](#schema-design-trade-offs)
+6. [Soft Delete Patterns](#soft-delete-patterns)
+7. [Interview Questions](#interview-questions)
+
+---
+
+## Data Modeling
+
+Data modeling is the process of defining **what data to store** and **how to structure it**. It progresses through three stages, each more detailed than the last.
+
+### Three Stages
+
+```
+Conceptual Model → Logical Model → Physical Model
+  (what entities?)   (what attributes?)  (what tables/types?)
+```
+
+#### Stage 1: Conceptual Model
+
+Identify the **entities** (nouns) and **relationships** (verbs) from business requirements. No schema details.
+
+```
+[User] ──places──> [Order] ──contains──> [Product]
+```
+
+**Output:** High-level diagram or list of entities and relationships.
+
+**Questions to ask:**
+- What are the main things the system tracks?
+- How do they relate to each other?
+- What are the business rules?
+
+---
+
+#### Stage 2: Logical Model
+
+Define **attributes**, **keys**, and **cardinality** for each entity. Still independent of any specific DBMS.
+
+```
+User (id, name, email, created_at)
+  PK: id
+  Unique: email
+
+Order (id, user_id, total, status, created_at)
+  PK: id
+  FK: user_id → User.id
+
+Product (id, name, price, stock)
+  PK: id
+
+OrderItem (order_id, product_id, quantity, unit_price)
+  PK: (order_id, product_id)
+  FK: order_id → Order.id
+  FK: product_id → Product.id
+```
+
+**Output:** Entity-attribute tables, relationship specs, constraints.
+
+---
+
+#### Stage 3: Physical Model
+
+Map the logical model to a **specific DBMS**: choose data types, indexes, partitioning, storage parameters.
+
+```sql
+CREATE TABLE users (
+    id          BIGSERIAL PRIMARY KEY,
+    name        VARCHAR(100) NOT NULL,
+    email       VARCHAR(255) NOT NULL UNIQUE,
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE orders (
+    id          BIGSERIAL PRIMARY KEY,
+    user_id     BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    total       NUMERIC(10,2) NOT NULL CHECK (total >= 0),
+    status      VARCHAR(20) NOT NULL DEFAULT 'pending',
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_orders_user_id ON orders(user_id);
+CREATE INDEX idx_orders_status ON orders(status) WHERE status = 'pending';
+```
+
+**Output:** CREATE TABLE statements, index definitions, partition schemes.
+
+### Stage Comparison
+
+| Aspect | Conceptual | Logical | Physical |
+|--------|-----------|---------|----------|
+| Audience | Business stakeholders | Analysts, developers | DBAs, backend engineers |
+| Detail level | Entities + relationships | Attributes, keys, constraints | Types, indexes, storage |
+| DBMS-specific | No | No | Yes |
+| Purpose | Shared understanding | Design validation | Implementation |
+
+### Modeling Tips
+
+| Tip | Reasoning |
+|-----|-----------|
+| Start with conceptual, don't jump to tables | Prevents design mistakes that are costly to fix later |
+| Normalize first, denormalize for performance | Correctness before optimization |
+| Name entities in singular (`User`, not `Users`) | Table is a collection of one entity |
+| Avoid abbreviations in entity/attribute names | Clarity over brevity |
+| Always include `created_at`, `updated_at` | Audit trail — almost every table needs them |
+| Model relationships explicitly (junction tables for M:N) | Don't rely on string parsing or arrays for relationships |
 
 ---
 
@@ -291,6 +394,38 @@ WHERE deleted_at IS NULL;
 > Evaluate when profiling shows JOIN cost dominates query time, and the data changes infrequently (so redundancy doesn't cause many update anomalies).
 
 ---
+
+### Q6. What are the three stages of data modeling?
+
+> **Answer:**
+> - **Conceptual model:** Identify entities (nouns) and relationships (verbs) from business requirements. No schema details. Example: User places Order, Order contains Product.
+> - **Logical model:** Define attributes, keys, and cardinality for each entity. DBMS-independent. Example: User(id, name, email), Order(id, user_id, total).
+> - **Physical model:** Map to a specific DBMS — choose data types, indexes, partitioning. Example: `id BIGSERIAL PRIMARY KEY`, `email VARCHAR(255) NOT NULL UNIQUE`.
+>
+> Start conceptual (broad understanding), then logical (design validation), then physical (implementation). Jumping straight to physical often leads to design mistakes.
+
+---
+
+### Q7. When would you add an `updated_at` column and how do you keep it current?
+
+> **Answer:**
+> Almost every table should have `created_at` and `updated_at` timestamp columns for auditing. The most reliable way to keep `updated_at` current is via a **BEFORE UPDATE trigger**:
+>
+> ```sql
+> CREATE OR REPLACE FUNCTION set_updated_at()
+> RETURNS TRIGGER AS $$
+> BEGIN
+>     NEW.updated_at = NOW();
+>     RETURN NEW;
+> END;
+> $$ LANGUAGE plpgsql;
+>
+> CREATE TRIGGER trg_set_updated_at
+> BEFORE UPDATE ON orders
+> FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+> ```
+>
+> This ensures `updated_at` is always set regardless of which application code path updates the row.
 
 <div align="center">
   <sub>← Back to <a href="Topic.md">All Topics</a></sub>
