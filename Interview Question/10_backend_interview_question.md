@@ -21,7 +21,7 @@
 9. How would you design an API for a long-running operation such as video processing or report generation?
    - **Key note:** Return `202` with a job resource, expose status/cancellation, and notify or allow polling on completion.
 10. When should an API return `200`, `201`, `202`, `204`, `409`, `422`, `429`, or `503`?
-   - **Key note:** Match semantics: success, created, accepted, no body, state conflict, invalid entity, rate-limited, or temporarily unavailable.
+   - **Key note:** Match semantics: successful response, resource created, processing accepted, success with no body, state conflict, semantically invalid content, rate-limited, or temporarily unavailable.
 11. How would you safely evolve a request or response schema used by independently deployed clients?
    - **Key note:** Make additive changes, tolerate unknown fields, use defaults, avoid changing meaning, and run consumer contract tests.
 12. What problems can arise when a reverse proxy, CDN, or browser caches an API response incorrectly?
@@ -32,7 +32,7 @@
 13. What is the difference between authentication and authorization, and where should each be enforced?
    - **Key note:** Authentication proves identity; authorization checks each requested action and resource at a trusted server-side boundary.
 14. Compare session-based authentication with token-based authentication.
-   - **Key note:** Sessions simplify revocation but require shared state; tokens scale independently but complicate revocation and secure storage.
+   - **Key note:** Server-side sessions simplify central revocation but require accessible state; self-contained tokens allow local validation but complicate revocation, rotation, and secure client storage.
 15. How do access tokens and refresh tokens work, and how should refresh-token rotation be implemented?
    - **Key note:** Keep access tokens short-lived; rotate refresh tokens on use and revoke the token family when reuse is detected.
 16. What are the security trade-offs between opaque tokens and JWTs?
@@ -50,7 +50,7 @@
 22. How would you protect an API from brute-force attacks without blocking legitimate users behind a shared IP address?
    - **Key note:** Combine account, device, IP, and risk-based limits with progressive delay, MFA, alerts, and careful recovery.
 23. What are CSRF, XSS, SSRF, SQL injection, and command injection, and which backend controls mitigate them?
-   - **Key note:** Use CSRF defenses, output encoding/CSP, URL allow-lists, parameterized SQL, and avoid shell construction.
+   - **Key note:** Use CSRF defenses, contextual output encoding/CSP, strict outbound-request validation and network egress controls, parameterized SQL, and APIs that avoid shell construction.
 24. How would you store, distribute, rotate, and audit application secrets?
    - **Key note:** Use a secret manager, short-lived identities, least privilege, automated rotation, encryption, and audited access.
 25. What is mutual TLS, and when would you use it between services?

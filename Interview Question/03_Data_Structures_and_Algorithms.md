@@ -6,8 +6,8 @@
    - Time complexity describes how operation count grows with input size, while space complexity describes how memory use grows.
 3. What are Big O, Big Omega, and Big Theta notation?
    - Big O gives an asymptotic upper bound, Omega a lower bound, and Theta a tight bound.
-4. What are the common complexities from `O(1)` to `O(2^n)`?
-   - Typical growth rates are constant, logarithmic, linear, linearithmic, quadratic, polynomial, exponential, and factorial, from generally most to least scalable.
+4. What are the common complexity growth rates?
+   - A common ordering is `O(1)`, `O(log n)`, `O(n)`, `O(n log n)`, `O(n²)`, `O(n^k)`, `O(c^n)`, and `O(n!)`, from generally most to least scalable for fixed `k > 2` and `c > 1`.
 5. What is the difference between an array and a linked list?
    - Arrays provide fast indexed access in contiguous storage; linked lists connect separate nodes and support cheap insertion when the position is already known.
 6. When would you use a singly linked list versus a doubly linked list?
@@ -23,7 +23,7 @@
 11. What is the difference between a set and a map?
    - A set stores unique values, while a map associates unique keys with values.
 12. What is a tree? Define root, leaf, height, and depth.
-   - A tree is a hierarchical acyclic structure; the root has no parent, a leaf no children, depth measures distance from root, and height the longest path to a leaf.
+   - A tree is a hierarchical acyclic structure; the root has no parent, a leaf has no children, depth measures distance from the root, and height measures the longest downward path to a leaf. State whether paths are counted in edges or nodes.
 13. What is the difference between a binary tree and a binary search tree?
    - A binary tree allows at most two children; a BST additionally orders keys so searches can discard part of the tree.
 14. What is a balanced tree, and why does balance matter?
@@ -37,7 +37,7 @@
 18. What is the difference between breadth-first search and depth-first search?
    - BFS explores by levels using a queue and finds shortest unweighted paths; DFS explores deeply using a stack or recursion.
 19. When can binary search be used, and what is its complexity?
-   - It requires a sorted, indexable search space and halves that space each step, taking `O(log n)` time.
+   - It applies when a monotonic condition lets each comparison discard half the search space. With constant-time access it takes `O(log n)` comparisons and time; on sequential structures, access can dominate.
 20. Compare bubble sort, insertion sort, merge sort, and quicksort.
    - Bubble and insertion are usually `O(n²)`; merge sort guarantees `O(n log n)` with extra space, while quicksort averages `O(n log n)` but can reach `O(n²)`.
 21. What is a stable sorting algorithm?

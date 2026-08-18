@@ -35,7 +35,7 @@
 17. What are static members, and how do they differ from instance members?
    - Static members belong to the class itself and are shared, while instance members belong to individual objects.
 18. What is an immutable class, and how would you design one?
-   - Its state cannot change after construction; use private final fields, controlled construction, no mutators, and defensive copies of mutable values.
+   - Its observable state cannot change after construction; prevent uncontrolled mutation, initialize all state during construction, and defensively copy mutable values where needed.
 19. What is dependency injection?
    - Dependency injection supplies an object's collaborators from outside instead of having the object construct them, improving flexibility and testability.
 20. What do high cohesion and low coupling mean?

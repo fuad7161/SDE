@@ -1,6 +1,6 @@
-# Basic Interview Questions
+# Software Engineering Interview Questions
 
-This folder contains frequently asked foundational questions for software engineering interviews. Use each file as a revision checklist: try answering a question aloud, give a small example, and discuss the relevant trade-offs.
+This folder contains 627 software-engineering interview questions, progressing from foundational concepts to advanced backend scenarios. The one-line answers are recall cues, not complete interview responses.
 
 ## Topics
 
@@ -15,8 +15,12 @@ This folder contains frequently asked foundational questions for software engine
 9. [Basic System Design](09_Basic_System_Design.md)
 10. [Backend Interview Questions — Medium to Hard](10_backend_interview_question.md)
 
-## Suggested practice
+## How to practice
 
-- Beginner: explain the definition in simple words.
-- Intermediate: add an example or a short piece of code.
-- Interview-ready: mention alternatives, trade-offs, and a real use case.
+1. Hide the answer and respond aloud in your own words.
+2. State the core idea first, then give a concrete example.
+3. For design questions, clarify requirements and quantify assumptions before proposing a solution.
+4. Discuss trade-offs, failure modes, and when an alternative would be better.
+5. Mark weak answers and revisit them with spaced repetition.
+
+For behavioral depth, connect technical choices to a real project: explain the context, your decision, the result, and what you would change next time.

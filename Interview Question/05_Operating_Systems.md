@@ -39,7 +39,7 @@
 19. What is virtual memory?
    - Virtual memory gives each process a private logical address space mapped to physical memory and potentially secondary storage.
 20. What is paging, and what is a page fault?
-   - Paging divides memory into fixed-size pages and frames; a page fault occurs when a referenced page is not currently mapped in physical memory.
+   - Paging divides virtual memory into fixed-size pages and physical memory into frames; a page fault traps to the OS when a page access lacks a valid mapping or violates permissions, and it may require loading data from storage.
 21. What is segmentation?
    - Segmentation divides memory into variable-size logical regions such as code, stack, and data, each with its own bounds and permissions.
 22. What is the difference between internal and external fragmentation?

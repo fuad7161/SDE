@@ -29,7 +29,7 @@
 14. What is a pure function, and what is a side effect?
    - A pure function gives the same output for the same input and changes no external state; modifying state or performing I/O is a side effect.
 15. What is function overloading?
-   - Overloading defines multiple functions with the same name but different parameter lists, letting the compiler select the appropriate version.
+   - Overloading defines multiple functions with the same name but different parameter lists; the language resolves the appropriate version from the call context.
 16. What is mutable versus immutable data?
    - Mutable data can change after creation; immutable data cannot, so an apparent modification creates a new value.
 17. What is garbage collection?
@@ -89,7 +89,7 @@
    - **Key note:** Metaprogramming generates, transforms, or reasons about code, reducing repetition at the cost of added complexity.
 43. What is undefined behavior, and how does it differ from an exception?
    - **Key note:** Undefined behavior has no language-guaranteed outcome; an exception is a defined runtime control-flow mechanism.
-44. What is resource acquisition is initialization (RAII)?
+44. What is Resource Acquisition Is Initialization (RAII)?
    - **Key note:** Resource lifetime is tied to object lifetime so deterministic destruction releases resources even during failure.
 45. How do floating-point precision errors occur, and how should monetary values be represented?
    - **Key note:** Binary floating point cannot exactly represent many decimals; use decimal or scaled-integer types for money.

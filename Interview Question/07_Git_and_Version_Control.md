@@ -31,7 +31,7 @@
 15. What is the difference between `git reset` and `git revert`?
    - Reset moves a branch and may alter local state; revert safely adds a new commit that undoes an earlier commit.
 16. What is `git stash`, and when would you use it?
-   - Stash temporarily saves uncommitted changes so the working tree can be cleaned and the changes reapplied later.
+   - Stash records selected uncommitted changes and normally restores tracked files to `HEAD` so the changes can be reapplied later; untracked files require an explicit option.
 17. What does `git cherry-pick` do?
    - It applies the changes introduced by selected commits onto the current branch as new commits.
 18. What are Git tags used for?

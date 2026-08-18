@@ -33,7 +33,7 @@
 16. How does TCP provide reliable delivery?
    - It uses sequence numbers, acknowledgements, checksums, retransmission, ordering, flow control, and congestion control.
 17. What are ports and sockets?
-   - A port identifies an application endpoint; a socket is a communication endpoint typically defined by protocol, address, and port.
+   - A port identifies a transport-layer service on a host; a socket is an OS communication endpoint. A connected flow is commonly identified by protocol plus local and remote address-port pairs.
 18. What happens after you enter a URL in a browser?
    - The browser parses the URL, resolves DNS, establishes transport and TLS if needed, sends HTTP, receives resources, then parses and renders them.
 19. What is HTTP? How is HTTPS different?
@@ -43,7 +43,7 @@
 21. What are the main groups of HTTP status codes?
    - The groups are 1xx informational, 2xx success, 3xx redirection, 4xx client error, and 5xx server error.
 22. What is the difference between HTTP/1.1, HTTP/2, and HTTP/3?
-   - HTTP/1.1 commonly uses multiple TCP connections, HTTP/2 multiplexes streams over TCP, and HTTP/3 uses QUIC over UDP.
+   - HTTP/1.1 commonly uses multiple TCP connections, HTTP/2 multiplexes streams over one TCP connection, and HTTP/3 runs over QUIC, which normally uses UDP and avoids transport-level head-of-line blocking between streams.
 23. What are TLS and an SSL certificate?
    - TLS secures data in transit; a certificate binds a public key to an identity through a trusted signature. SSL is the obsolete predecessor name.
 24. What are cookies, sessions, and tokens?

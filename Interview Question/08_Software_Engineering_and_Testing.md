@@ -9,7 +9,7 @@
 4. Compare Agile and Waterfall development.
    - Waterfall follows largely sequential phases, while Agile delivers in short feedback-driven iterations and adapts requirements as learning occurs.
 5. What are Scrum roles, events, and artifacts?
-   - Scrum defines Product Owner, Scrum Master, and Developers; recurring planning and review events; and Product Backlog, Sprint Backlog, and Increment artifacts.
+   - Scrum defines the Product Owner, Scrum Master, and Developers; the Sprint plus Planning, Daily Scrum, Review, and Retrospective events; and Product Backlog, Sprint Backlog, and Increment artifacts.
 6. What are cohesion and coupling?
    - Cohesion measures how closely a module's responsibilities belong together; coupling measures its dependency on other modules.
 7. What does DRY mean?
@@ -29,7 +29,7 @@
 14. What is the difference between a library, framework, and platform?
    - Code calls a library, a framework typically controls flow and calls application code, and a platform supplies a broader runtime and service environment.
 15. What is unit testing?
-   - Unit testing checks a small behavior in isolation with fast, deterministic, focused tests.
+   - Unit testing checks a small unit of behavior with fast, deterministic, focused tests; isolation may come from design or test doubles, not necessarily from mocking every collaborator.
 16. What is the difference between unit, integration, system, and acceptance testing?
    - They test individual units, component interactions, the complete system, and whether the product satisfies user or business requirements.
 17. What are black-box and white-box testing?

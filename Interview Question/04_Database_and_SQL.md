@@ -25,7 +25,7 @@
 12. What are the disadvantages of having too many indexes?
    - They consume space and slow inserts, updates, and deletes because every affected index must also be maintained.
 13. What is the difference between clustered and non-clustered indexes?
-   - A clustered index determines the table's physical or primary row order; a non-clustered index is a separate structure pointing to rows.
+   - In systems that use the terms, a clustered index organizes table rows by its key, while a non-clustered index is a separate structure that locates rows. Exact storage semantics are database-specific.
 14. What is a database transaction?
    - A transaction groups operations into one logical unit that either commits successfully or rolls back.
 15. What do the ACID properties mean?

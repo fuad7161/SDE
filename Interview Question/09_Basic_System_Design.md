@@ -27,9 +27,9 @@
 13. When would you choose SQL versus NoSQL?
    - Choose based on data relationships, transaction and query needs, schema flexibility, scale patterns, operational maturity, and consistency requirements.
 14. What is the CAP theorem?
-   - During a network partition, a distributed system cannot guarantee both complete consistency and complete availability for every request.
+   - During a network partition, a distributed system cannot provide both linearizable consistency and a successful response from every non-failing node for every request.
 15. What is consistency? Compare strong and eventual consistency.
-   - Strong consistency exposes the latest completed write; eventual consistency allows temporary differences but converges when updates stop.
+   - Consistency models define which values reads may observe. Strong consistency is an umbrella term whose precise guarantee must be stated; eventual consistency allows replicas to differ temporarily but converge when updates stop.
 16. What is a message queue, and why would a system use one?
    - A queue buffers messages between producers and consumers to decouple services, absorb bursts, and enable asynchronous processing.
 17. What is the difference between synchronous and asynchronous communication?
@@ -41,7 +41,7 @@
 20. What does it mean for an API operation to be idempotent?
    - Repeating the same request has the same intended effect as performing it once, which makes retries safer.
 21. What are rate limiting and throttling?
-   - Rate limiting enforces an allowed request quota, while throttling slows or rejects traffic when limits or capacity are reached.
+   - Rate limiting enforces a request quota over an interval; throttling is the broader act of controlling traffic, for example by delaying, shaping, or rejecting requests.
 22. What is a CDN, and what problem does it solve?
    - A CDN serves content from distributed edge locations, reducing user latency, origin traffic, and exposure to traffic spikes.
 23. What is a reverse proxy?
