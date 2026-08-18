@@ -60,3 +60,46 @@
    - Normalize as required, then compare character-frequency maps or sorted characters.
 30. How would you find the shortest path in an unweighted graph?
    - Run BFS from the source and store each node's predecessor to reconstruct the first-discovered shortest path.
+
+## Medium to Advanced
+
+31. What is amortized analysis, and why is dynamic-array append considered `O(1)` amortized?
+   - **Key note:** Rare costly resizes are spread across many cheap appends, producing constant average cost over the operation sequence.
+32. How do AVL trees and red-black trees differ?
+   - **Key note:** AVL trees are more strictly balanced for faster lookup; red-black trees allow easier, often faster updates.
+33. How does a trie work, and when is it preferable to a hash table?
+   - **Key note:** It follows key prefixes character by character and excels at prefix queries, ordering, and shared-prefix data.
+34. What is a disjoint-set union structure, and where is it used?
+   - **Key note:** Union-find tracks connected components efficiently with path compression and union by rank/size.
+35. Compare Dijkstra's and Bellman-Ford shortest-path algorithms.
+   - **Key note:** Dijkstra is faster with nonnegative edges; Bellman-Ford handles negative edges and detects negative cycles.
+36. When should Floyd-Warshall be used?
+   - **Key note:** It computes all-pairs shortest paths in `O(V³)`, making it suitable for smaller dense graphs.
+37. How does topological sorting work, and when is it impossible?
+   - **Key note:** Kahn's algorithm or DFS orders a directed acyclic graph; a directed cycle makes such an order impossible.
+38. What are strongly connected components?
+   - **Key note:** They are maximal directed-graph regions where every vertex can reach every other vertex.
+39. What is a minimum spanning tree, and how do Kruskal's and Prim's algorithms differ?
+   - **Key note:** It connects all vertices at minimum total edge cost; Kruskal grows by edges, while Prim grows one tree.
+40. What is the sliding-window technique?
+   - **Key note:** Maintain an incrementally updated contiguous range to avoid recomputing every subarray or substring.
+41. What is the two-pointer technique?
+   - **Key note:** Move two indices according to an invariant, commonly reducing nested searches on sorted or sequential data.
+42. What is a monotonic stack, and which problems does it solve?
+   - **Key note:** It keeps elements increasing or decreasing to find next/previous greater or smaller elements in linear time.
+43. How do you recognize a dynamic-programming problem?
+   - **Key note:** Look for optimal substructure, overlapping subproblems, and a state that summarizes prior decisions.
+44. What is interval dynamic programming?
+   - **Key note:** States represent subranges and transitions split or extend intervals, as in matrix-chain multiplication.
+45. What is the difference between a segment tree and a Fenwick tree?
+   - **Key note:** Fenwick trees are compact for invertible prefix aggregates; segment trees support broader range queries and lazy updates.
+46. What is lazy propagation in a segment tree?
+   - **Key note:** Store pending range updates at internal nodes and push them only when descendants are needed.
+47. How would you find the `k`th largest element without fully sorting an array?
+   - **Key note:** Use Quickselect for average `O(n)` or a size-`k` heap for streaming and predictable `O(n log k)`.
+48. How does reservoir sampling select items from a stream of unknown length?
+   - **Key note:** Replace sampled items with decreasing probability so every seen item has equal final selection chance.
+49. What is a Bloom filter, and what guarantees does it provide?
+   - **Key note:** It is a compact probabilistic membership structure with false positives but no false negatives after valid insertion.
+50. What is the difference between NP-hard and NP-complete problems?
+   - **Key note:** NP-hard problems are at least as hard as NP problems; NP-complete problems are both NP-hard and verifiable in polynomial time.

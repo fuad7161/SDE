@@ -44,3 +44,46 @@
    - It is a hosted review workflow for discussing, checking, and approving a proposed branch integration.
 22. Why should generated files and secrets usually not be committed?
    - Generated files create noise and reproducibility problems; committed secrets can be copied from history even after later deletion.
+
+## Medium to Advanced
+
+23. How does Git represent commits, trees, blobs, and tags internally?
+   - **Key note:** Git stores content-addressed objects: blobs hold content, trees directories, commits snapshots/history, and annotated tags references plus metadata.
+24. Why does changing a commit create a new commit hash?
+   - **Key note:** A commit ID hashes its contents and parent references, so any metadata, tree, or ancestry change creates a new object.
+25. What is the difference between a merge commit, squash merge, and rebase merge?
+   - **Key note:** They preserve branch topology, combine changes into one commit, or replay individual commits into linear history.
+26. When is rebasing a shared branch dangerous?
+   - **Key note:** Rebase rewrites commit identities, forcing collaborators to reconcile history they already based work upon.
+27. How does `git rebase --onto` help move a range of commits?
+   - **Key note:** It replays commits after a selected old base onto a different new base, enabling precise history surgery.
+28. What is an interactive rebase used for?
+   - **Key note:** It can reorder, edit, squash, split, or remove unpublished commits before sharing them.
+29. What is the reflog, and when can it recover lost work?
+   - **Key note:** Reflog records local reference movements, allowing recently orphaned commits to be located before expiration.
+30. What is a detached `HEAD`, and how do you preserve commits created there?
+   - **Key note:** `HEAD` points directly to a commit; create a branch or tag before those commits become unreachable.
+31. How do the three forms of `git reset` differ?
+   - **Key note:** Soft moves only the branch, mixed also resets staging, and hard also overwrites tracked working-tree content.
+32. How do `ours` and `theirs` change meaning during rebase?
+   - **Key note:** During rebase, “ours” is the target/upstream side and “theirs” is the commit being replayed.
+33. What is a three-way merge?
+   - **Key note:** Git compares two tips with their common ancestor to determine each side's independent changes.
+34. How does Git detect renames if it does not store rename operations?
+   - **Key note:** It compares deleted and added content heuristically based on similarity during diff or merge.
+35. What is `git bisect`, and how does it locate a regression?
+   - **Key note:** Binary search repeatedly tests midpoint commits between known good and bad revisions.
+36. What is the difference between submodules and subtrees?
+   - **Key note:** Submodules reference an external repository commit; subtrees copy and merge another project's content into the repository.
+37. What problem does Git LFS solve?
+   - **Key note:** It stores small pointers in Git while large binary content lives in separate object storage.
+38. How can a secret be removed from the entire Git history?
+   - **Key note:** Rotate it first, rewrite all affected history with a filtering tool, force-update refs, and coordinate every clone.
+39. What are signed commits and signed tags?
+   - **Key note:** Cryptographic signatures let others verify the claimed author/key and that tagged or committed data was not changed.
+40. How do shallow and partial clones differ?
+   - **Key note:** Shallow clones limit history depth; partial clones omit selected object content and fetch it on demand.
+41. What is a merge strategy versus a merge strategy option?
+   - **Key note:** A strategy chooses the merge algorithm; an option tunes that algorithm's conflict resolution behavior.
+42. How would you design a branch-protection policy for a production repository?
+   - **Key note:** Require reviewed pull requests, passing checks, protected history, limited bypass, signed artifacts, and controlled release permissions.

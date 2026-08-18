@@ -50,3 +50,46 @@
    - A subtype must be safely usable wherever its base type is expected without breaking the caller's valid assumptions.
 25. What are the Interface Segregation and Dependency Inversion principles?
    - ISP favors small client-specific interfaces; DIP says high-level policy should depend on abstractions rather than concrete low-level details.
+
+## Medium to Advanced
+
+26. What is the difference between subtype polymorphism and parametric polymorphism?
+   - **Key note:** Subtype polymorphism dispatches through inheritance/interfaces; parametric polymorphism uses generics uniformly across types.
+27. What is the fragile base-class problem?
+   - **Key note:** A base-class change can silently break subclasses that depend on its internal behavior, showing inheritance's tight coupling.
+28. What is the diamond inheritance problem, and how do languages address it?
+   - **Key note:** Multiple paths inherit the same base member; languages use restrictions, explicit resolution, virtual inheritance, or linearization.
+29. What is the difference between delegation and inheritance?
+   - **Key note:** Delegation forwards work to a collaborator, while inheritance obtains behavior through an “is-a” relationship.
+30. What is the Law of Demeter?
+   - **Key note:** An object should talk mainly to close collaborators, avoiding long navigation chains and structural coupling.
+31. What is tell-don't-ask?
+   - **Key note:** Ask an object to perform behavior instead of extracting its state and making decisions elsewhere.
+32. What is an anemic domain model, and when might it be acceptable?
+   - **Key note:** It separates data from behavior; it may suit simple CRUD but loses encapsulated domain rules in complex systems.
+33. What are entities, value objects, and aggregates in domain-driven design?
+   - **Key note:** Entities have identity, value objects are defined by attributes, and aggregates protect consistency behind one root.
+34. How do you preserve class invariants?
+   - **Key note:** Validate construction and every state transition while preventing uncontrolled mutation of internal state.
+35. What is double dispatch, and how does the Visitor pattern use it?
+   - **Key note:** Behavior is selected from two runtime types; Visitor combines element dispatch with an overloaded visitor method.
+36. What is the difference between inheritance and interface implementation?
+   - **Key note:** Inheritance may reuse state and implementation; an interface establishes a behavioral contract without class ancestry.
+37. What is dependency inversion at an architectural boundary?
+   - **Key note:** Domain policy owns abstractions, while external details implement adapters that point inward toward the domain.
+38. What is constructor injection, and why is it usually preferred?
+   - **Key note:** Required dependencies are supplied at creation, making valid construction, immutability, and testing straightforward.
+39. When is a service locator considered an anti-pattern?
+   - **Key note:** It hides dependencies behind global lookup, making contracts unclear and tests/order of initialization fragile.
+40. What is object identity, and how does it affect equality and hashing?
+   - **Key note:** Identity distinguishes instances; equality and hash codes must remain consistent, especially when objects are map keys.
+41. Why can mutable objects be unsafe as hash-map keys?
+   - **Key note:** Changing fields used in hashing can move the logical bucket, making the stored key impossible to find.
+42. What is the difference between a domain model and a data-transfer object?
+   - **Key note:** A domain model contains rules and behavior; a DTO carries data across a boundary and should not own domain logic.
+43. How would you break a circular dependency between classes or modules?
+   - **Key note:** Extract a stable abstraction, move shared responsibility, introduce events, or redraw ownership boundaries.
+44. What are temporal coupling and hidden state?
+   - **Key note:** Temporal coupling requires calls in a specific order; hidden state makes behavior depend on non-obvious history.
+45. When should a class be sealed or final?
+   - **Key note:** Prevent extension when invariants, security, immutability, or an intentionally closed hierarchy require controlled subtypes.

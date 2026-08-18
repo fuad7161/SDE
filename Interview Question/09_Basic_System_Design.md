@@ -60,3 +60,46 @@
    - Add independent redundant instances, automated failover, replicated state, health-based routing, and testing of failure scenarios.
 30. What would you clarify before designing a URL shortener or chat service?
    - Clarify features, traffic and data scale, read/write patterns, latency, consistency, availability, retention, security, and cost constraints.
+
+## Medium to Advanced
+
+31. How would you estimate capacity for a new system from incomplete requirements?
+   - **Key note:** State assumptions, derive peak QPS, storage and bandwidth from user actions, then test sensitivity and growth headroom.
+32. What is consistent hashing, and when is it useful?
+   - **Key note:** It distributes keys while minimizing remapping during membership changes, useful for caches and partitioned services.
+33. How do replication factor and read/write quorums affect a distributed store?
+   - **Key note:** Larger quorums improve overlap and consistency but increase latency and reduce availability during failures.
+34. Compare leader-follower, multi-leader, and leaderless replication.
+   - **Key note:** Compare write paths, conflict resolution, failover, geographic latency, and consistency guarantees.
+35. What is the difference between strong consistency, linearizability, and serializability?
+   - **Key note:** Linearizability concerns real-time single-operation behavior; serializability concerns transaction ordering across operations.
+36. What is a distributed consensus algorithm used for?
+   - **Key note:** It lets nodes agree on an ordered value or log despite limited failures, enabling leader election and replicated state.
+37. What is split brain, and how can quorum prevent it?
+   - **Key note:** Competing partitions both claim authority; intersecting majorities prevent two sides from committing independently.
+38. How would you choose a sharding key?
+   - **Key note:** Align it with primary queries while ensuring even load, stable ownership, adequate cardinality, and manageable resharding.
+39. How would you reshard a live system without downtime?
+   - **Key note:** Copy ranges incrementally, dual-read/write or route by version, verify consistency, cut traffic over, then clean up.
+40. What is the transactional outbox pattern?
+   - **Key note:** Save a domain update and pending event in one transaction, then reliably relay the event to close the dual-write gap.
+41. How do Saga orchestration and choreography differ?
+   - **Key note:** Orchestration centralizes workflow decisions; choreography distributes them among event-reacting services.
+42. How would you make an asynchronous workflow idempotent?
+   - **Key note:** Give operations stable IDs and atomically store deduplication state with each business effect.
+43. What are backpressure and load shedding?
+   - **Key note:** Backpressure slows producers; load shedding rejects work that cannot complete within capacity or deadlines.
+44. Why do retries require exponential backoff, jitter, and a budget?
+   - **Key note:** They prevent synchronized retry storms, spread recovery load, and cap traffic amplification.
+45. How do bulkheads and circuit breakers prevent cascading failure?
+   - **Key note:** Bulkheads isolate resource pools; circuit breakers stop calls to a failing dependency so failures do not consume everything.
+46. What is a hot partition, and how can it be mitigated?
+   - **Key note:** Skew directs excessive load to one owner; improve key distribution, split hot keys, cache, or isolate heavy tenants.
+47. How would you design multi-region failover?
+   - **Key note:** Define RTO/RPO and consistency, replicate independently, automate routing, remove regional dependencies, and test failover.
+48. What is the difference between an event log and a message queue?
+   - **Key note:** A log retains ordered history for independent replay; a queue primarily distributes work for consumption.
+49. How would you design a globally distributed rate limiter?
+   - **Key note:** Decide whether limits must be exact; partition ownership or allocate regional quotas and reconcile approximate usage.
+50. How do you identify and remove a single point of failure in stateful infrastructure?
+   - **Key note:** Map every dependency, add independent replicas and quorum/failover, remove shared dependencies, and exercise failure paths.

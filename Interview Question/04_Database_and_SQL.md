@@ -64,3 +64,46 @@
    - Group by the columns that define duplication and filter with `HAVING COUNT(*) > 1`.
 32. How would you diagnose a slow SQL query?
    - Inspect its execution plan, indexes, row estimates, filters, joins, data volume, locking, and database resource metrics.
+
+## Medium to Advanced
+
+33. How does multi-version concurrency control work?
+   - **Key note:** MVCC keeps row versions so readers can use a consistent snapshot while writers create new versions.
+34. What is write skew, and which isolation level prevents it?
+   - **Key note:** Concurrent transactions update different rows after reading one invariant; true serializable isolation prevents the anomaly.
+35. What is the difference between optimistic and pessimistic locking?
+   - **Key note:** Optimistic locking detects version conflicts at write time; pessimistic locking blocks competitors before modification.
+36. How do database deadlocks occur, and how should applications handle them?
+   - **Key note:** Transactions acquire locks in a cycle; keep transactions short/order locks consistently and safely retry the chosen victim.
+37. How does the order of columns in a composite index affect its use?
+   - **Key note:** B-tree queries generally need the leftmost prefix, with equality columns before range or sorting columns.
+38. What is a covering index?
+   - **Key note:** It contains all columns needed by a query, avoiding table access but increasing storage and write overhead.
+39. Why might a query optimizer choose a full table scan over an index?
+   - **Key note:** A scan can be cheaper for low-selectivity queries, small tables, stale statistics, or non-sargable predicates.
+40. What makes a predicate sargable?
+   - **Key note:** A searchable predicate lets an index directly locate a range; functions or casts on indexed columns often prevent it.
+41. What is cardinality estimation, and why does it matter?
+   - **Key note:** The optimizer predicts row counts to select joins and access paths; bad estimates produce poor plans.
+42. Compare nested-loop, hash, and merge joins.
+   - **Key note:** Nested loops suit small indexed inputs, hash joins suit equality, and merge joins exploit sorted inputs.
+43. What is table partitioning, and how does partition pruning work?
+   - **Key note:** Partitioning divides one logical table; pruning skips partitions proven irrelevant to the query predicate.
+44. What is database sharding, and how should a shard key be chosen?
+   - **Key note:** Sharding distributes rows across servers; choose a stable, evenly distributed key aligned with access patterns.
+45. How do leader-follower replication and replication lag affect applications?
+   - **Key note:** Followers scale reads but apply writes later, so clients may violate read-your-writes unless routed carefully.
+46. What is change data capture?
+   - **Key note:** CDC streams committed row changes from a transaction log for integration, replication, or derived views.
+47. How would you perform a zero-downtime schema migration?
+   - **Key note:** Use expand-and-contract phases, compatible application versions, batched backfill, validation, and delayed cleanup.
+48. What are window functions, and how do they differ from `GROUP BY`?
+   - **Key note:** Window functions calculate across related rows without collapsing each row into one grouped result.
+49. What are common table expressions, and when can recursive CTEs help?
+   - **Key note:** CTEs name query subresults; recursive CTEs traverse hierarchies or iteratively derive rows.
+50. How do you design an idempotent database write?
+   - **Key note:** Attach a stable operation key and enforce uniqueness while storing the effect and result atomically.
+51. What is connection pooling, and how can incorrect pool sizing harm a database?
+   - **Key note:** Too few connections queue work; too many increase contention and can overwhelm database capacity.
+52. How would you archive or delete billions of old rows safely?
+   - **Key note:** Prefer partition rotation or small indexed batches, throttle work, monitor replication, and verify retention requirements.

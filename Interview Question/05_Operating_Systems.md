@@ -56,3 +56,46 @@
    - A file system organizes persistent data into files and directories and manages names, metadata, permissions, storage, and retrieval.
 28. What is the difference between a symbolic link and a hard link?
    - A symbolic link stores a path and may cross file systems; a hard link is another directory entry for the same underlying file data.
+
+## Medium to Advanced
+
+29. How does copy-on-write work after process creation?
+   - **Key note:** Parent and child share read-only pages until one writes, when the OS copies only the modified page.
+30. What is the difference between a kernel thread and a user-level thread?
+   - **Key note:** The kernel schedules kernel threads; user threads are managed in a runtime and mapped onto kernel execution units.
+31. What are green threads and coroutines?
+   - **Key note:** They are user-space scheduled units that provide cheap concurrency, often yielding cooperatively around blocking work.
+32. How does a system call transition from user mode to kernel mode?
+   - **Key note:** A controlled trap switches privilege, validates arguments, runs a kernel handler, and returns the result.
+33. What is the difference between blocking, non-blocking, synchronous, and asynchronous I/O?
+   - **Key note:** Blocking concerns waiting of the caller; async concerns completion notification, while synchronous completes within the request flow.
+34. Compare `select`, `poll`, and scalable event mechanisms such as `epoll` or `kqueue`.
+   - **Key note:** `select/poll` repeatedly scan descriptors; scalable mechanisms report only ready changes and handle large sets efficiently.
+35. How does virtual-to-physical address translation work?
+   - **Key note:** The MMU uses page tables, accelerated by the TLB, to map virtual pages to physical frames.
+36. What is a translation lookaside buffer?
+   - **Key note:** A TLB caches recent page-table translations; misses require a more expensive page-table walk.
+37. What is demand paging?
+   - **Key note:** Pages are loaded only on first access, reducing initial memory use at the cost of possible page faults.
+38. Compare page-replacement algorithms such as FIFO, LRU, and Clock.
+   - **Key note:** They approximate which page is least valuable; Clock cheaply approximates LRU using reference bits.
+39. What is memory-mapped I/O, and when is it useful?
+   - **Key note:** Files or devices appear in virtual memory, enabling paging and simpler random access but requiring careful error handling.
+40. What are zero-copy I/O techniques?
+   - **Key note:** They reduce copying between kernel and user buffers through mechanisms such as `sendfile`, DMA, or buffer sharing.
+41. How does a journaling file system improve crash recovery?
+   - **Key note:** It records intended metadata or data changes in a log before applying them, enabling replay after failure.
+42. What is CPU cache locality, and why does it affect performance?
+   - **Key note:** Accessing nearby or recently used data reduces expensive memory fetches and cache misses.
+43. What is false sharing?
+   - **Key note:** Threads modify unrelated values on one cache line, causing costly cache-coherence invalidations.
+44. What is priority inversion, and how can priority inheritance help?
+   - **Key note:** A high-priority task waits on a low-priority lock holder; temporarily raising the holder's priority speeds release.
+45. What is the thundering-herd problem?
+   - **Key note:** Many waiters wake for one event and contend wastefully; targeted wakeups and work distribution reduce it.
+46. How do namespaces and control groups provide container isolation?
+   - **Key note:** Namespaces isolate resource views; cgroups account for and limit CPU, memory, and other resources.
+47. What is NUMA, and why can memory placement matter?
+   - **Key note:** Memory access is faster to a CPU's local node, so poor thread/data placement increases latency.
+48. How would you diagnose high load average with low CPU utilization?
+   - **Key note:** Check tasks blocked on disk/network I/O, uninterruptible sleep, lock contention, and resource saturation.

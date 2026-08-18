@@ -56,3 +56,46 @@
    - Logs record events, metrics aggregate numerical measurements, and traces follow a request across components.
 28. How would you debug an issue that cannot be reproduced locally?
    - Gather exact context and observability data, compare environments, correlate recent changes, form hypotheses, and add safe targeted instrumentation.
+
+## Medium to Advanced
+
+29. What is the testing pyramid, and when does it become misleading?
+   - **Key note:** Favor many fast focused tests and fewer broad tests, but choose layers according to actual architecture and risk.
+30. What is the difference between state-based and interaction-based testing?
+   - **Key note:** State tests verify outcomes; interaction tests verify collaborator calls and can couple tests more tightly to implementation.
+31. What are contract tests, and which integration failures do they catch?
+   - **Key note:** They verify provider/consumer interface expectations without full end-to-end environments, catching incompatible independent changes.
+32. What are property-based tests?
+   - **Key note:** They generate many inputs to verify general invariants and shrink failures to small counterexamples.
+33. What are mutation tests?
+   - **Key note:** They deliberately alter production code; surviving mutations reveal tests that execute code without effectively checking behavior.
+34. How do flaky tests harm a delivery pipeline?
+   - **Key note:** They destroy trust, hide real failures, slow feedback, and encourage unsafe reruns or ignored results.
+35. How would you test concurrent code deterministically?
+   - **Key note:** Control scheduling and clocks, synchronize known points, assert invariants, and repeat stress/model checks without arbitrary sleeps.
+36. How should external dependencies be tested?
+   - **Key note:** Combine unit fakes, contract tests, targeted integration tests, and a small number of end-to-end checks.
+37. What is consumer-driven contract testing?
+   - **Key note:** Consumers publish required interactions and providers verify them, supporting safe independent deployment.
+38. What is the difference between load, stress, spike, soak, and capacity testing?
+   - **Key note:** They test expected traffic, breaking limits, sudden bursts, long-duration stability, and maximum sustainable throughput.
+39. How do you choose useful test data?
+   - **Key note:** Cover boundaries, invalid states, realistic distributions, security cases, and production-like scale without exposing real personal data.
+40. What is hexagonal or ports-and-adapters architecture?
+   - **Key note:** Core policy exposes ports while replaceable adapters connect databases, frameworks, queues, and user interfaces.
+41. Compare layered, clean, hexagonal, and event-driven architectures.
+   - **Key note:** Compare dependency direction, boundary enforcement, coupling, flow, testability, and operational complexity—not labels alone.
+42. What is a bounded context?
+   - **Key note:** It is a boundary within which one domain model and vocabulary have precise, consistent meaning.
+43. What is an architecture decision record?
+   - **Key note:** An ADR captures context, chosen decision, alternatives, and consequences so future teams understand the trade-off.
+44. What are feature flags, and what operational debt can they create?
+   - **Key note:** Flags decouple release from deployment but add state combinations and dead paths; assign ownership and removal dates.
+45. How do blue-green and canary releases reduce deployment risk?
+   - **Key note:** Blue-green enables environment switching; canary limits initial exposure and evaluates real production signals.
+46. What is a blameless incident review?
+   - **Key note:** It studies system conditions and decisions without personal blame, producing owned actions that reduce recurrence and impact.
+47. What are SLI, SLO, SLA, and error budget?
+   - **Key note:** They define measurement, reliability target, external promise, and permitted unreliability for balancing change and stability.
+48. How do trunk-based development and long-lived feature branches differ?
+   - **Key note:** Trunk-based work integrates small changes frequently; long-lived branches defer integration and increase merge and release risk.

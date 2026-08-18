@@ -60,3 +60,46 @@
    - A content delivery network serves cached content from geographically distributed edge locations to reduce latency and origin load.
 30. What is a load balancer?
    - It distributes requests across healthy backend instances to improve capacity, availability, and fault tolerance.
+
+## Medium to Advanced
+
+31. How do TCP flow control and congestion control differ?
+   - **Key note:** Flow control protects the receiver; congestion control protects the network by adjusting the sender's rate.
+32. What are slow start, congestion avoidance, and congestion window?
+   - **Key note:** TCP grows its sending window rapidly at first, then cautiously, reducing it when congestion is inferred.
+33. Why does TCP have a `TIME_WAIT` state?
+   - **Key note:** It lets delayed packets expire and allows retransmission of the final ACK before the connection tuple is reused.
+34. What are head-of-line blocking and multiplexing?
+   - **Key note:** One delayed item blocks later work; multiplexing separates logical streams, though TCP packet loss can still block HTTP/2 streams.
+35. How does QUIC differ from TCP with TLS?
+   - **Key note:** QUIC integrates secure transport over UDP, supports stream-level recovery, and enables faster connection establishment.
+36. How does TLS 1.3 establish a secure connection?
+   - **Key note:** It negotiates parameters, authenticates the server, performs ephemeral key exchange, and derives symmetric session keys.
+37. What is certificate-chain validation?
+   - **Key note:** The client verifies signatures to a trusted root plus hostname, validity, usage, and revocation-related policy.
+38. What is DNS caching, and how do TTL and negative caching affect changes?
+   - **Key note:** Resolvers retain positive or missing answers until expiry, so updates and recoveries propagate gradually.
+39. What are recursive and iterative DNS resolution?
+   - **Key note:** A recursive resolver obtains the final result for a client; iterative servers return answers or referrals.
+40. What is anycast routing?
+   - **Key note:** Multiple sites advertise the same address and routing delivers clients to a nearby reachable site.
+41. How does NAT work, and what is port-address translation?
+   - **Key note:** NAT rewrites addresses; PAT also maps ports so many private connections can share one public address.
+42. What is the difference between Layer 4 and Layer 7 load balancing?
+   - **Key note:** L4 routes using transport data; L7 understands application protocols and can route by host, path, headers, or cookies.
+43. What are sticky sessions, and what problems can they cause?
+   - **Key note:** They bind clients to backends but reduce balance, complicate failure recovery, and encourage local session state.
+44. How does consistent hashing help distribute network traffic?
+   - **Key note:** It limits remapping when nodes change and is useful for caches or stateful routing.
+45. What is connection pooling and keep-alive?
+   - **Key note:** Reusing established connections avoids repeated TCP/TLS handshakes but requires limits and stale-connection handling.
+46. What is the difference between a timeout and a deadline?
+   - **Key note:** A timeout bounds one wait; a deadline is an absolute end time that can propagate through the whole request chain.
+47. How do retries amplify load during a network or service failure?
+   - **Key note:** Each layer may retry the same work, creating a retry storm; use one retry point, budgets, backoff, and jitter.
+48. What is a SYN flood, and how do SYN cookies help?
+   - **Key note:** Attackers fill half-open connection state; SYN cookies defer server-side allocation until the final handshake ACK.
+49. What is MTU, and how can path MTU problems appear?
+   - **Key note:** Oversized packets require fragmentation or rejection; blocked discovery messages can cause unexplained connection stalls.
+50. How would you diagnose intermittent network latency between two services?
+   - **Key note:** Correlate traces with DNS, connection setup, retransmissions, packet loss, routing, proxy queues, and endpoint saturation.

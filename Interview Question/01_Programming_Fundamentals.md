@@ -50,3 +50,46 @@
    - Command-line arguments are values supplied when launching a program; environment variables are named configuration values inherited from its environment.
 25. What are coding conventions, and why do they matter?
    - Coding conventions are shared rules for naming, formatting, and structure that make a codebase consistent and easier to maintain.
+
+## Medium to Advanced
+
+26. What is lexical scope, and how does it differ from dynamic scope?
+   - **Key note:** Lexical scope follows where code is written; dynamic scope follows the runtime call chain.
+27. What is a closure, and what data does it capture?
+   - **Key note:** A closure combines a function with variables from its surrounding lexical environment, extending their lifetime.
+28. What is the difference between shallow copying and deep copying?
+   - **Key note:** A shallow copy shares nested references; a deep copy recursively creates independent nested data.
+29. What are covariance, contravariance, and invariance?
+   - **Key note:** They describe whether a generic or function type may vary in the same, opposite, or neither direction as its component type.
+30. What is type erasure, and how can it affect generics at runtime?
+   - **Key note:** Type parameters are removed or generalized during compilation, limiting runtime type inspection and some operations.
+31. What is the difference between early binding and late binding?
+   - **Key note:** Early binding chooses a target before runtime; late binding dispatches according to runtime type or state.
+32. What are first-class and higher-order functions?
+   - **Key note:** First-class functions can be stored and passed; higher-order functions accept or return functions.
+33. What are currying and partial application?
+   - **Key note:** Currying converts a multi-argument function into chained single-argument functions; partial application fixes only some arguments.
+34. What is tail recursion, and why can tail-call optimization matter?
+   - **Key note:** The recursive call is the final operation, allowing supporting runtimes to reuse the current stack frame.
+35. What is lazy evaluation, and what trade-offs does it introduce?
+   - **Key note:** Values are computed only when needed, saving work but making timing, memory use, and debugging less predictable.
+36. What is the difference between declarative and imperative programming?
+   - **Key note:** Imperative code specifies execution steps; declarative code expresses the desired result or rules.
+37. What is referential transparency?
+   - **Key note:** An expression is referentially transparent when it can be replaced by its value without changing program behavior.
+38. How do stack overflow and heap exhaustion differ?
+   - **Key note:** Stack overflow usually comes from excessive call depth or frames; heap exhaustion comes from retained or excessive allocations.
+39. What is memory aliasing, and why can it cause subtle bugs?
+   - **Key note:** Multiple references name the same mutable storage, so a change through one reference unexpectedly affects others.
+40. What are serialization and deserialization, and what risks do they introduce?
+   - **Key note:** They convert objects to and from transferable data; risks include compatibility, data loss, unsafe input, and code execution.
+41. What is reflection, and when should it be used carefully?
+   - **Key note:** Reflection inspects or invokes program structure at runtime but weakens static safety and can hurt clarity and performance.
+42. What is metaprogramming?
+   - **Key note:** Metaprogramming generates, transforms, or reasons about code, reducing repetition at the cost of added complexity.
+43. What is undefined behavior, and how does it differ from an exception?
+   - **Key note:** Undefined behavior has no language-guaranteed outcome; an exception is a defined runtime control-flow mechanism.
+44. What is resource acquisition is initialization (RAII)?
+   - **Key note:** Resource lifetime is tied to object lifetime so deterministic destruction releases resources even during failure.
+45. How do floating-point precision errors occur, and how should monetary values be represented?
+   - **Key note:** Binary floating point cannot exactly represent many decimals; use decimal or scaled-integer types for money.
